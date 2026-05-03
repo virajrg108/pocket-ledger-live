@@ -3,7 +3,8 @@ import {
   RouterProvider,
   Outlet,
   Link,
-  useLocation
+  useLocation,
+  Navigate
 } from "react-router-dom";
 import { PlusCircle, LayoutDashboard, BarChart3, Settings as SettingsIcon } from "lucide-react";
 
@@ -11,6 +12,9 @@ import { Dashboard } from "./pages/Dashboard";
 import { TransactionForm } from "./pages/TransactionForm";
 import { Settings } from "./pages/Settings";
 import { Reports } from "./pages/Reports";
+import { Login } from "./pages/Login";
+import { useAuthStore } from "./store/useAuthStore";
+
 
 function Layout() {
   const location = useLocation();
@@ -72,10 +76,28 @@ function Layout() {
   );
 }
 
+function ProtectedLayout() {
+  const { user, loading } = useAuthStore();
+  
+  if (loading) {
+    return <div className="min-h-screen bg-zinc-950 flex items-center justify-center text-zinc-50">Loading...</div>;
+  }
+
+  if (!user) {
+    return <Navigate to="/login" replace />;
+  }
+
+  return <Layout />;
+}
+
 const router = createHashRouter([
   {
+    path: "/login",
+    element: <Login />,
+  },
+  {
     path: "/",
-    element: <Layout />,
+    element: <ProtectedLayout />,
     children: [
       {
         index: true,
