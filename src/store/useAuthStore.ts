@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { User, onAuthStateChanged, signOut as firebaseSignOut } from 'firebase/auth';
+import { type User, onAuthStateChanged, signOut as firebaseSignOut } from 'firebase/auth';
 import { auth } from '../lib/firebase';
 
 interface AuthState {

@@ -1,13 +1,15 @@
 import { useState, useEffect } from "react";
-import { useParams, useNavigate } from "react-router-dom";
-import { useLiveQuery } from "dexie-react-hooks";
+import { useParams, useNavigate, useLocation } from "react-router-dom";
+import { useCollectionData } from "react-firebase-hooks/firestore";
+import { getDoc, addDoc, updateDoc, deleteDoc, doc } from "firebase/firestore";
+import { getUserCollections, type TransactionType, type TransactionSource } from "../db";
+import { db as firestoreDb } from "../lib/firebase";
+import { useAuthStore } from "../store/useAuthStore";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { format } from "date-fns";
 import { Calendar as CalendarIcon, ArrowLeft, Trash2 } from "lucide-react";
-
-import { db, type TransactionType, type TransactionSource } from "../db";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
@@ -63,28 +65,35 @@ const formSchema = z.object({
 export function TransactionForm() {
     const { id } = useParams();
     const navigate = useNavigate();
+    const { user } = useAuthStore();
+    const collections = getUserCollections(user?.uid);
     const isEditing = !!id;
     const [loadError, setLoadError] = useState("");
+
+    const location = useLocation();
+    const voiceData = location.state?.voiceData as Record<string, any> | undefined;
 
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema) as any,
         defaultValues: {
-            title: "",
-            amount: undefined as unknown as number,
-            type: "Debit",
-            source: "",
-            toSource: "",
-            category: "Need",
-            timestamp: new Date(),
+            title: voiceData?.title || "",
+            amount: voiceData?.amount || (undefined as unknown as number),
+            type: voiceData?.type || "Debit",
+            source: voiceData?.source || "",
+            toSource: voiceData?.toSource || "",
+            category: voiceData?.category || "Need",
+            timestamp: voiceData?.timestamp ? new Date(voiceData.timestamp) : new Date(),
         },
     });
 
     useEffect(() => {
         async function loadTransaction() {
-            if (!isEditing) return;
+            if (!isEditing || !user || !id) return;
             try {
-                const tx = await db.transactions.get(Number(id));
-                if (tx) {
+                const txRef = doc(firestoreDb, 'users', user.uid, 'transactions', id);
+                const snapshot = await getDoc(txRef);
+                if (snapshot.exists()) {
+                    const tx = snapshot.data();
                     form.reset({
                         title: tx.title,
                         amount: Math.abs(tx.amount), // Form shows positive, submission handles sign
@@ -102,7 +111,7 @@ export function TransactionForm() {
             }
         }
         loadTransaction();
-    }, [id, isEditing, form]);
+    }, [id, isEditing, form, user]);
 
     async function onSubmit(values: z.infer<typeof formSchema>) {
         // Determine the actual signed amount based on type
@@ -113,21 +122,27 @@ export function TransactionForm() {
             finalAmount = Math.abs(values.amount); // Transfers store positive amounts
         }
 
-        const transactionData = {
+        const transactionData: any = {
             title: values.title,
             amount: finalAmount,
             type: values.type as TransactionType,
             source: values.source as TransactionSource,
-            toSource: values.type === 'Transfer' ? values.toSource as TransactionSource : undefined,
-            category: values.type !== 'Transfer' ? values.category as "Need" | "Want" | "Other" | undefined : undefined,
             timestamp: values.timestamp.toISOString(),
         };
 
+        if (values.type === 'Transfer' && values.toSource) {
+            transactionData.toSource = values.toSource as TransactionSource;
+        } else if (values.type !== 'Transfer' && values.category) {
+            transactionData.category = values.category as "Need" | "Want" | "Other";
+        }
+
         try {
-            if (isEditing) {
-                await db.transactions.update(Number(id), transactionData);
+            if (!user || !collections) return;
+            if (isEditing && id) {
+                const txRef = doc(firestoreDb, 'users', user.uid, 'transactions', id);
+                await updateDoc(txRef, transactionData);
             } else {
-                await db.transactions.add(transactionData);
+                await addDoc(collections.transactions, transactionData);
             }
             navigate("/");
         } catch (e) {
@@ -137,14 +152,14 @@ export function TransactionForm() {
     }
 
     async function handleDelete() {
-        if (!isEditing) return;
+        if (!isEditing || !user || !id) return;
         if (window.confirm("Are you sure you want to delete this entry?")) {
-            await db.transactions.delete(Number(id));
+            await deleteDoc(doc(firestoreDb, 'users', user.uid, 'transactions', id));
             navigate("/");
         }
     }
 
-    const accounts = useLiveQuery(() => db.accounts.toArray());
+    const [accounts] = useCollectionData(collections?.accounts);
     const watchedType = form.watch("type");
 
     if (loadError) return <div className="p-8 text-red-500">{loadError}</div>;

@@ -1,23 +1,23 @@
 # PocketLedger
 
-PocketLedger is a fast, offline-first Progressive Web App (PWA) designed for logging and managing your daily financial transactions. By leveraging browser-native local storage (IndexedDB), PocketLedger keeps your financial data completely private and instantly accessible, even without an internet connection. No accounts, no servers, and zero latency.
+PocketLedger is a fast Progressive Web App (PWA) designed for logging and managing your daily financial transactions. With seamless cloud synchronization via Firebase, PocketLedger ensures your financial data is securely backed up and instantly accessible across all your devices.
 
 ## Key Features
 
-- **Offline-First PWA:** Install it directly onto your desktop or mobile device. Run it without internet perfectly fine.
+- **Cloud Sync & Authentication:** Secure login using Firebase Authentication with real-time data sync across all your devices using Cloud Firestore.
 - **Dynamic Dashboard:** A beautiful, intuitive overview showing real-time balances across your custom accounts (Bank, Credit Card, Cash, etc.) and recent history.
 - **Cash Flow Types:** Easily manage `Debit` (Expenses), `Credit` (Income), and `Transfer` (internal movements between accounts) types.
 - **Budgeting Categories:** Tag your debit expenses as a `Need`, a `Want`, or `Other` to better understand your spending habits.
 - **Detailed Analytics:** Flexible date-range filters allow you to view specific transactions and calculate total income, total expense, and net flow for any period.
-- **Excel Exports:** Instantly export your filtered transaction logs directly to `.xlsx` format for your own records.
-- **Data Privacy:** Your data never leaves your device. All transactions are stored locally in your browser's IndexedDB.
+- **Exports & Backups:** Instantly export your filtered transaction logs directly to an `.xlsx` Excel file, or push reports directly to a Google Sheets endpoint.
+- **Installable PWA:** Install it directly onto your desktop or mobile device for an app-like experience.
 
 ## Tech Stack
 
 - **Framework:** React + TypeScript + Vite
 - **Styling:** Tailwind CSS + Shadcn UI
-- **Database:** Dexie (IndexedDB wrapper)
-- **Exports:** SheetJS (`xlsx`)
+- **Backend & Database:** Firebase (Authentication, Firestore)
+- **Exports:** ExcelJS (`xlsx`), Google Apps Script Integration
 - **Routing:** React Router DOM
 - **Date Handling:** date-fns
 

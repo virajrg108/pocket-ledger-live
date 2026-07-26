@@ -14,6 +14,7 @@ import { Settings } from "./pages/Settings";
 import { Reports } from "./pages/Reports";
 import { Login } from "./pages/Login";
 import { useAuthStore } from "./store/useAuthStore";
+import { VoiceCommand } from "./components/VoiceCommand";
 
 
 function Layout() {
@@ -71,6 +72,7 @@ function Layout() {
         <main className="flex-1 w-full max-w-5xl mx-auto md:p-8">
           <Outlet />
         </main>
+        <VoiceCommand />
       </div>
     </div>
   );

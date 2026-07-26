@@ -1,10 +1,11 @@
-import Dexie, { type EntityTable } from 'dexie';
+import { collection, type DocumentData, type QueryDocumentSnapshot, type SnapshotOptions } from 'firebase/firestore';
+import { db as firestoreDb } from './lib/firebase';
 
 export type TransactionType = 'Debit' | 'Credit' | 'Transfer';
 export type TransactionSource = string;
 
 export interface Transaction {
-    id?: number;
+    id?: string;
     title: string;
     amount: number;
     type: TransactionType;
@@ -15,35 +16,38 @@ export interface Transaction {
 }
 
 export interface Account {
-    id?: number;
+    id?: string;
     name: TransactionSource;
     initialBalance: number;
 }
 
-const db = new Dexie('PocketLedgerDB') as Dexie & {
-    transactions: EntityTable<
-        Transaction,
-        'id'
-    >;
-    accounts: EntityTable<
-        Account,
-        'id'
-    >;
+const transactionConverter = {
+    toFirestore(tx: Transaction): DocumentData {
+        const { id, ...data } = tx;
+        return data;
+    },
+    fromFirestore(snapshot: QueryDocumentSnapshot, options: SnapshotOptions): Transaction {
+        const data = snapshot.data(options);
+        return { id: snapshot.id, ...data } as Transaction;
+    }
 };
 
-// Define schema
-db.version(1).stores({
-    transactions: '++id, title, amount, type, source, timestamp'
-});
+const accountConverter = {
+    toFirestore(acc: Account): DocumentData {
+        const { id, ...data } = acc;
+        return data;
+    },
+    fromFirestore(snapshot: QueryDocumentSnapshot, options: SnapshotOptions): Account {
+        const data = snapshot.data(options);
+        return { id: snapshot.id, ...data } as Account;
+    }
+};
 
-db.version(2).stores({
-    transactions: '++id, title, amount, type, source, timestamp',
-    accounts: '++id, &name, initialBalance'
-});
-
-db.version(3).stores({
-    transactions: '++id, title, amount, type, source, toSource, timestamp',
-    accounts: '++id, &name, initialBalance'
-});
-
-export { db };
+// Utility function to get user-specific collections
+export const getUserCollections = (userId: string | undefined) => {
+    if (!userId) return null;
+    return {
+        transactions: collection(firestoreDb, 'users', userId, 'transactions').withConverter(transactionConverter),
+        accounts: collection(firestoreDb, 'users', userId, 'accounts').withConverter(accountConverter)
+    };
+};

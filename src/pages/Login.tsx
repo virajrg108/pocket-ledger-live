@@ -5,8 +5,10 @@ import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "../components/ui/card";
 import { Label } from "../components/ui/label";
+import { useNavigate } from "react-router-dom";
 
 export function Login() {
+  const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isLogin, setIsLogin] = useState(true);
@@ -21,6 +23,7 @@ export function Login() {
       } else {
         await createUserWithEmailAndPassword(auth, email, password);
       }
+      navigate("/");
     } catch (err: any) {
       setError(err.message);
     }
@@ -29,6 +32,7 @@ export function Login() {
   const handleAnonymousSignIn = async () => {
     try {
       await signInAnonymously(auth);
+      navigate("/");
     } catch (err: any) {
       setError(err.message);
     }

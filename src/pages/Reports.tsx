@@ -1,10 +1,12 @@
 import { useState } from "react";
-import { useLiveQuery } from "dexie-react-hooks";
+import { useCollectionData } from "react-firebase-hooks/firestore";
+import { query, orderBy } from "firebase/firestore";
 import ExcelJS from "exceljs";
 import { format, startOfMonth, endOfMonth, parseISO, isAfter, isBefore, isEqual } from "date-fns";
 import { Download, Calendar as CalendarIcon, Filter, Upload } from "lucide-react";
 
-import { db, type Transaction } from "../db";
+import { getUserCollections, type Transaction } from "../db";
+import { useAuthStore } from "../store/useAuthStore";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Calendar } from "@/components/ui/calendar";
@@ -86,8 +88,18 @@ export function Reports() {
     const [endDate, setEndDate] = useState<Date>(endOfMonth(new Date()));
     const [isExportingToGoogleSheet, setIsExportingToGoogleSheet] = useState(false);
 
-    const transactions = useLiveQuery(() => db.transactions.orderBy('timestamp').reverse().toArray());
-    const accounts = useLiveQuery(() => db.accounts.toArray());
+    const { user } = useAuthStore();
+    const collections = getUserCollections(user?.uid);
+
+    const [transactions, , errorTx] = useCollectionData(
+        collections ? query(collections.transactions, orderBy('timestamp', 'desc')) : null
+    );
+    const [accounts, , errorAcc] = useCollectionData(
+        collections?.accounts
+    );
+
+    if (errorTx) return <div className="p-8 text-rose-400">Error loading transactions: {errorTx.message}</div>;
+    if (errorAcc) return <div className="p-8 text-rose-400">Error loading accounts: {errorAcc.message}</div>;
 
     // Filter transactions by date range
     const filteredTransactions = transactions?.filter(t => {

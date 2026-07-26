@@ -1,8 +1,11 @@
 
-import { useLiveQuery } from "dexie-react-hooks";
+import { useCollectionData } from "react-firebase-hooks/firestore";
+import { query, orderBy, deleteDoc, doc } from "firebase/firestore";
 import { Link } from "react-router-dom";
 import { format, parseISO } from "date-fns";
-import { db } from "../db";
+import { getUserCollections } from "../db";
+import { useAuthStore } from "../store/useAuthStore";
+import { db as firestoreDb } from "../lib/firebase";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
@@ -52,10 +55,19 @@ const FitText = ({ children, className, align = "left" }: { children: React.Reac
 };
 
 export function Dashboard() {
-    const transactions = useLiveQuery(() => db.transactions.orderBy('timestamp').reverse().toArray());
-    const accounts = useLiveQuery(() => db.accounts.toArray());
+    const { user } = useAuthStore();
+    const collections = getUserCollections(user?.uid);
 
-    if (!transactions || !accounts) return <div className="p-8 text-zinc-400">Loading offline data...</div>;
+    const [transactions, loadingTx, errorTx] = useCollectionData(
+        collections ? query(collections.transactions, orderBy('timestamp', 'desc')) : null
+    );
+    const [accounts, loadingAcc, errorAcc] = useCollectionData(
+        collections?.accounts
+    );
+
+    if (errorTx) return <div className="p-8 text-rose-400">Error loading transactions: {errorTx.message}</div>;
+    if (errorAcc) return <div className="p-8 text-rose-400">Error loading accounts: {errorAcc.message}</div>;
+    if (loadingTx || loadingAcc || !transactions || !accounts) return <div className="p-8 text-zinc-400">Loading data...</div>;
 
     const totalBalance = accounts.reduce((accTotal, acc) => {
         const txSum = transactions.reduce((sum, t) => {
@@ -71,10 +83,10 @@ export function Dashboard() {
         return accTotal + acc.initialBalance + txSum;
     }, 0);
 
-    const handleDelete = async (id?: number) => {
-        if (!id) return;
+    const handleDelete = async (id?: string) => {
+        if (!id || !user) return;
         if (window.confirm("Are you sure you want to delete this transaction from your history?")) {
-            await db.transactions.delete(id);
+            await deleteDoc(doc(firestoreDb, 'users', user.uid, 'transactions', id));
         }
     };
 
@@ -158,7 +170,7 @@ export function Dashboard() {
                                         </TableCell>
                                         <TableCell>
                                             <div className="flex flex-col">
-                                                <Link to={`/edit/${t.id}`} className="hover:underline hover:text-emerald-400 font-semibold mb-1">
+                                                <Link to={`/edit/${t.id}`} className="text-zinc-100 hover:underline hover:text-emerald-400 font-semibold mb-1">
                                                     {t.title}
                                                 </Link>
                                                 {/* On mobile, show the source as a small subtitle if it's hidden from the main column */}
@@ -170,20 +182,20 @@ export function Dashboard() {
                                         </TableCell>
                                         <TableCell className="hidden md:table-cell">
                                             {t.type === 'Transfer' ? (
-                                                <div className="flex items-center gap-1 text-xs text-zinc-400">
+                                                <div className="flex items-center gap-1 text-xs text-zinc-300">
                                                     <span>{t.source}</span>
                                                     <span>→</span>
                                                     <span>{t.toSource}</span>
                                                 </div>
                                             ) : (
-                                                <Badge variant="outline" className="border-zinc-700 text-zinc-300">{t.source}</Badge>
+                                                <Badge variant="outline" className="border-zinc-600 text-zinc-100 bg-zinc-900/50">{t.source}</Badge>
                                             )}
                                         </TableCell>
                                         <TableCell className="hidden sm:table-cell">
                                             <div className="flex gap-2">
-                                                <Badge variant="secondary" className="bg-zinc-800 text-zinc-300 hover:bg-zinc-700">{t.type}</Badge>
+                                                <Badge variant="secondary" className="bg-zinc-800 text-zinc-100 hover:bg-zinc-700">{t.type}</Badge>
                                                 {t.category && (
-                                                    <Badge variant="outline" className={`border-zinc-700 ${t.category === 'Need' ? 'text-blue-400' : t.category === 'Want' ? 'text-purple-400' : 'text-zinc-400'}`}>
+                                                    <Badge variant="outline" className={`border-zinc-600 bg-zinc-900/50 ${t.category === 'Need' ? 'text-blue-300' : t.category === 'Want' ? 'text-purple-300' : 'text-zinc-300'}`}>
                                                         {t.category}
                                                     </Badge>
                                                 )}
