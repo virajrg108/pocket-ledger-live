@@ -28,7 +28,7 @@ function Layout() {
       <nav className="fixed bottom-0 w-full bg-card border-t border-border md:relative md:w-64 md:border-t-0 md:border-r flex md:flex-col justify-around md:justify-start p-2 z-50">
         <div className="hidden md:flex items-center mb-8 px-2 mt-2">
           <img src={`${import.meta.env.BASE_URL}pwa-64x64.png`} alt="Logo" className="w-8 h-8 mr-2 drop-shadow-sm" />
-          <h1 className="text-xl font-bold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-amber-400 to-orange-500">PocketLedger</h1>
+          <h1 className="text-xl font-bold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-amber-400 to-orange-500">Pocket Ledger</h1>
         </div>
 
         <Link
@@ -70,7 +70,7 @@ function Layout() {
         <header className="md:hidden flex items-center justify-between p-4 border-b border-border bg-background/80 backdrop-blur-md sticky top-0 z-40">
           <div className="flex items-center">
             <img src={`${import.meta.env.BASE_URL}pwa-64x64.png`} alt="Logo" className="w-8 h-8 mr-2 drop-shadow-sm" />
-            <h1 className="text-xl font-bold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-amber-400 to-orange-500">PocketLedger</h1>
+            <h1 className="text-xl font-bold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-amber-400 to-orange-500">Pocket Ledger</h1>
           </div>
           <ThemeToggle />
         </header>
@@ -91,7 +91,7 @@ function Layout() {
 
 function ProtectedLayout() {
   const { user, loading } = useAuthStore();
-  
+
   if (loading) {
     return <div className="min-h-screen bg-background flex items-center justify-center text-foreground">Loading...</div>;
   }
