@@ -99,7 +99,7 @@ export function VoiceCommand() {
       {(!isListening && !transcription) && (
         <Button
           onClick={startListening}
-          className="fixed bottom-24 right-4 md:bottom-8 md:right-8 rounded-full w-14 h-14 shadow-lg z-50 bg-emerald-500 hover:bg-emerald-600 text-zinc-950 transition-transform hover:scale-105"
+          className="fixed bottom-24 right-4 md:bottom-4 md:right-8 rounded-full w-14 h-14 shadow-lg z-50 bg-gradient-to-br from-amber-400 to-orange-500 text-black border-0 transition-transform hover:scale-105"
         >
           <Mic className="w-6 h-6" />
         </Button>
@@ -147,7 +147,7 @@ export function VoiceCommand() {
                 <Button variant="outline" onClick={handleCancel} className="bg-transparent border-zinc-700 text-zinc-300 hover:bg-zinc-800 hover:text-zinc-50">
                   Cancel
                 </Button>
-                <Button onClick={handleFinish} className="bg-emerald-500 hover:bg-emerald-600 text-zinc-950 font-medium">
+                <Button onClick={handleFinish} className="bg-orange-500 hover:bg-orange-600 text-zinc-950 font-medium">
                   <Check className="w-4 h-4 mr-2" />
                   Finish & Review
                 </Button>
@@ -163,9 +163,9 @@ export function VoiceCommand() {
 function FieldCard({ label, value }: { label: string, value?: string }) {
   const isFilled = value !== undefined && value !== "";
   return (
-    <div className={`p-3 rounded-md border ${isFilled ? 'border-emerald-500/50 bg-emerald-500/10' : 'border-zinc-800 bg-zinc-950'}`}>
+    <div className={`p-3 rounded-md border ${isFilled ? 'border-orange-500/50 bg-orange-500/10' : 'border-zinc-800 bg-zinc-950'}`}>
       <div className="text-xs font-semibold text-zinc-500 uppercase tracking-wider mb-1">{label}</div>
-      <div className={`text-sm font-medium truncate ${isFilled ? 'text-emerald-400' : 'text-zinc-600'}`}>
+      <div className={`text-sm font-medium truncate ${isFilled ? 'text-orange-400' : 'text-zinc-600'}`}>
         {isFilled ? value : '—'}
       </div>
     </div>

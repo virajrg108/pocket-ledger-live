@@ -66,86 +66,86 @@ export function Settings() {
     return (
         <div className="p-4 md:p-8 space-y-4 animate-in fade-in duration-500">
             <div>
-                <h2 className="text-2xl md:text-3xl font-bold tracking-tight text-zinc-50">Settings</h2>
-                <p className="text-zinc-400 text-sm md:text-lg">Manage your custom accounts and starting balances.</p>
+                <h2 className="text-2xl md:text-3xl font-bold tracking-tight text-foreground">Settings</h2>
+                <p className="text-muted-foreground text-sm md:text-lg">Manage your custom accounts and starting balances.</p>
             </div>
 
-            <Card className="max-w-2xl bg-zinc-900 border-zinc-800 text-zinc-50">
+            <Card className="max-w-2xl bg-card border-border text-foreground">
                 <CardHeader className="flex flex-row items-center justify-between">
                     <div>
                         <CardTitle className="flex items-center gap-2">
-                            <Wallet className="w-5 h-5 text-emerald-400" />
+                            <Wallet className="w-5 h-5 text-primary" />
                             Source Accounts
                         </CardTitle>
-                        <CardDescription className="text-zinc-400">
+                        <CardDescription className="text-muted-foreground">
                             Create diverse account buckets (e.g. 'Cash', 'Amex', 'Savings'). The dashboard will track these dynamically.
                         </CardDescription>
                     </div>
-                    <Button variant="outline" className="border-rose-800 text-rose-400 hover:bg-rose-950" onClick={signOut}>
+                    <Button variant="outline" className="border-destructive text-destructive hover:bg-destructive/10" onClick={signOut}>
                         Sign Out
                     </Button>
                 </CardHeader>
                 <CardContent className="space-y-6">
                     {/* Add New Form */}
-                    <form onSubmit={handleAddAccount} className="flex flex-col sm:flex-row gap-3 items-end bg-zinc-950 p-4 rounded-lg border border-zinc-800">
+                    <form onSubmit={handleAddAccount} className="flex flex-col sm:flex-row gap-3 items-end bg-background p-4 rounded-lg border border-border">
                         <div className="flex-1 w-full space-y-1">
-                            <label className="text-sm text-zinc-400 font-medium">Account Name</label>
+                            <label className="text-sm text-muted-foreground font-medium">Account Name</label>
                             <Input
                                 placeholder="e.g. Chase Sapphire"
                                 value={newName}
                                 onChange={(e) => setNewName(e.target.value)}
-                                className="bg-zinc-900 border-zinc-800 focus-visible:ring-emerald-500"
+                                className="bg-background border-border focus-visible:ring-primary"
                                 required
                             />
                         </div>
                         <div className="flex-1 w-full space-y-1">
-                            <label className="text-sm text-zinc-400 font-medium">Initial Balance (₹)</label>
+                            <label className="text-sm text-muted-foreground font-medium">Initial Balance (₹)</label>
                             <Input
                                 type="number"
                                 step="0.01"
                                 placeholder="0.00"
                                 value={newBalance}
                                 onChange={(e) => setNewBalance(e.target.value)}
-                                className="bg-zinc-900 border-zinc-800 focus-visible:ring-emerald-500"
+                                className="bg-background border-border focus-visible:ring-primary"
                             />
                         </div>
-                        <Button type="submit" className="w-full sm:w-auto bg-emerald-500 hover:bg-emerald-600 text-zinc-950 font-bold">
+                        <Button type="submit" className="w-full sm:w-auto bg-gradient-to-r from-amber-400 to-orange-500 hover:from-amber-500 hover:to-orange-600 text-black font-bold border-0">
                             <Plus className="w-4 h-4 mr-2" />
                             Add Account
                         </Button>
                     </form>
 
                     {/* Desktop Table mapping */}
-                    <div className="rounded-md border border-zinc-800 overflow-hidden">
+                    <div className="rounded-md border border-border overflow-hidden">
                         <Table>
-                            <TableHeader className="bg-zinc-950">
-                                <TableRow className="border-zinc-800 hover:bg-transparent">
-                                    <TableHead className="text-zinc-400">Name</TableHead>
-                                    <TableHead className="text-zinc-400 text-right">Starting Balance</TableHead>
+                            <TableHeader className="bg-background">
+                                <TableRow className="border-border hover:bg-transparent">
+                                    <TableHead className="text-muted-foreground">Name</TableHead>
+                                    <TableHead className="text-muted-foreground text-right">Starting Balance</TableHead>
                                     <TableHead className="w-[80px]"></TableHead>
                                 </TableRow>
                             </TableHeader>
                             <TableBody>
                                 {!accounts || accounts.length === 0 ? (
                                     <TableRow>
-                                        <TableCell colSpan={3} className="text-center text-zinc-500 py-6">
+                                        <TableCell colSpan={3} className="text-center text-muted-foreground py-6">
                                             No accounts configured yet.
                                         </TableCell>
                                     </TableRow>
                                 ) : (
                                     accounts.map((acc) => (
-                                        <TableRow key={acc.id} className="border-zinc-800 hover:bg-zinc-800/50">
-                                            <TableCell className="font-medium text-zinc-200">
+                                        <TableRow key={acc.id} className="border-border hover:bg-muted/50">
+                                            <TableCell className="font-medium text-foreground">
                                                 {acc.name}
                                             </TableCell>
-                                            <TableCell className="text-right text-emerald-400">
+                                            <TableCell className="text-right text-primary">
                                                 {formatCurrency(acc.initialBalance)}
                                             </TableCell>
                                             <TableCell className="text-right">
                                                 <Button
                                                     variant="ghost"
                                                     size="icon"
-                                                    className="text-zinc-500 hover:text-rose-400 hover:bg-rose-400/10 h-8 w-8"
+                                                    className="text-muted-foreground hover:text-destructive hover:bg-destructive/10 h-8 w-8"
                                                     onClick={() => acc.id && handleDeleteAccount(acc.id, acc.name)}
                                                     title="Delete Account"
                                                 >

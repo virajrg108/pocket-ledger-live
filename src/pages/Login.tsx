@@ -39,18 +39,18 @@ export function Login() {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-zinc-950 p-4">
-      <Card className="w-full max-w-md bg-zinc-900 border-zinc-800 text-zinc-50">
+    <div className="flex items-center justify-center min-h-screen bg-background p-4">
+      <Card className="w-full max-w-md bg-card border-border text-foreground">
         <CardHeader className="space-y-1">
           <CardTitle className="text-2xl font-bold tracking-tight text-center">PocketLedger</CardTitle>
-          <CardDescription className="text-zinc-400 text-center">
+          <CardDescription className="text-muted-foreground text-center">
             {isLogin ? "Enter your email below to login to your account" : "Enter your email below to create your account"}
           </CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="email" className="text-zinc-50">Email</Label>
+              <Label htmlFor="email" className="text-foreground">Email</Label>
               <Input 
                 id="email" 
                 type="email" 
@@ -58,33 +58,33 @@ export function Login() {
                 required 
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="bg-zinc-800 border-zinc-700 text-zinc-50"
+                className="bg-background border-border text-foreground"
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="password" className="text-zinc-50">Password</Label>
+              <Label htmlFor="password" className="text-foreground">Password</Label>
               <Input 
                 id="password" 
                 type="password" 
                 required 
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="bg-zinc-800 border-zinc-700 text-zinc-50"
+                className="bg-background border-border text-foreground"
               />
             </div>
-            {error && <p className="text-red-500 text-sm">{error}</p>}
-            <Button type="submit" className="w-full bg-emerald-500 hover:bg-emerald-600 text-zinc-950 font-semibold">
+            {error && <p className="text-destructive text-sm">{error}</p>}
+            <Button type="submit" className="w-full bg-gradient-to-r from-amber-400 to-orange-500 hover:from-amber-500 hover:to-orange-600 text-white font-semibold border-0">
               {isLogin ? "Sign In" : "Sign Up"}
             </Button>
           </form>
           <div className="mt-4 flex flex-col space-y-2">
-            <Button variant="outline" className="w-full border-zinc-700 text-zinc-300 hover:bg-zinc-800" onClick={handleAnonymousSignIn}>
+            <Button variant="outline" className="w-full border-border text-muted-foreground hover:bg-muted" onClick={handleAnonymousSignIn}>
               Continue as Guest (Anonymous)
             </Button>
           </div>
         </CardContent>
         <CardFooter>
-          <Button variant="link" className="w-full text-zinc-400" onClick={() => setIsLogin(!isLogin)}>
+          <Button variant="link" className="w-full text-muted-foreground" onClick={() => setIsLogin(!isLogin)}>
             {isLogin ? "Don't have an account? Sign up" : "Already have an account? Sign in"}
           </Button>
         </CardFooter>

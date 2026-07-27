@@ -195,7 +195,7 @@ export function TransactionForm() {
                                     <FormItem>
                                         <FormLabel>Description / Title</FormLabel>
                                         <FormControl>
-                                            <Input placeholder="e.g. Weekly Groceries" className="bg-zinc-950 border-zinc-800 focus-visible:ring-emerald-500" {...field} />
+                                            <Input placeholder="e.g. Weekly Groceries" className="bg-zinc-950 border-zinc-800 focus-visible:ring-orange-500" {...field} />
                                         </FormControl>
                                         <FormMessage className="text-rose-500" />
                                     </FormItem>
@@ -210,7 +210,7 @@ export function TransactionForm() {
                                         <FormItem>
                                             <FormLabel>Amount</FormLabel>
                                             <FormControl>
-                                                <Input type="number" step="0.01" min="0" placeholder="0.00" className="bg-zinc-950 border-zinc-800 focus-visible:ring-emerald-500" {...field} />
+                                                <Input type="number" step="0.01" min="0" placeholder="0.00" className="bg-zinc-950 border-zinc-800 focus-visible:ring-orange-500" {...field} />
                                             </FormControl>
                                             <FormMessage className="text-rose-500" />
                                         </FormItem>
@@ -270,7 +270,7 @@ export function TransactionForm() {
                                             <FormLabel>Cash Flow</FormLabel>
                                             <Select onValueChange={field.onChange} defaultValue={field.value}>
                                                 <FormControl>
-                                                    <SelectTrigger className="bg-zinc-950 border-zinc-800 text-zinc-300 focus:ring-emerald-500">
+                                                    <SelectTrigger className="bg-zinc-950 border-zinc-800 text-zinc-300 focus:ring-orange-500">
                                                         <SelectValue placeholder="Select type" />
                                                     </SelectTrigger>
                                                 </FormControl>
@@ -293,7 +293,7 @@ export function TransactionForm() {
                                             <FormLabel>{watchedType === 'Transfer' ? 'From Account' : 'Source Account'}</FormLabel>
                                             <Select onValueChange={field.onChange} defaultValue={field.value} value={field.value}>
                                                 <FormControl>
-                                                    <SelectTrigger className="bg-zinc-950 border-zinc-800 text-zinc-300 focus:ring-emerald-500">
+                                                    <SelectTrigger className="bg-zinc-950 border-zinc-800 text-zinc-300 focus:ring-orange-500">
                                                         <SelectValue placeholder="Select source" />
                                                     </SelectTrigger>
                                                 </FormControl>
@@ -320,7 +320,7 @@ export function TransactionForm() {
                                                 <FormLabel>To Account</FormLabel>
                                                 <Select onValueChange={field.onChange} defaultValue={field.value} value={field.value}>
                                                     <FormControl>
-                                                        <SelectTrigger className="bg-zinc-950 border-zinc-800 text-zinc-300 focus:ring-emerald-500">
+                                                        <SelectTrigger className="bg-zinc-950 border-zinc-800 text-zinc-300 focus:ring-orange-500">
                                                             <SelectValue placeholder="Select destination" />
                                                         </SelectTrigger>
                                                     </FormControl>
@@ -348,7 +348,7 @@ export function TransactionForm() {
                                                 <FormLabel>Category</FormLabel>
                                                 <Select onValueChange={field.onChange} defaultValue={field.value} value={field.value}>
                                                     <FormControl>
-                                                        <SelectTrigger className="bg-zinc-950 border-zinc-800 text-zinc-300 focus:ring-emerald-500">
+                                                        <SelectTrigger className="bg-zinc-950 border-zinc-800 text-zinc-300 focus:ring-orange-500">
                                                             <SelectValue placeholder="Select category" />
                                                         </SelectTrigger>
                                                     </FormControl>
@@ -365,7 +365,7 @@ export function TransactionForm() {
                                 )}
                             </div>
 
-                            <Button type="submit" className="w-full bg-emerald-500 hover:bg-emerald-600 text-zinc-950 font-bold">
+                            <Button type="submit" className="w-full bg-orange-500 hover:bg-orange-600 text-zinc-950 font-bold">
                                 {isEditing ? "Save Changes" : "Save Entry"}
                             </Button>
                         </form>

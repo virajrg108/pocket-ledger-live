@@ -420,26 +420,26 @@ export function Reports() {
     return (
         <div className="p-4 md:p-8 space-y-4 animate-in fade-in duration-500">
             <div>
-                <h2 className="text-lg md:text-3xl font-bold tracking-tight text-zinc-50">Reports & Exports</h2>
-                <p className="text-zinc-400 text-sm md:text-lg">Analyze your spending and extract offline backups.</p>
+                <h2 className="text-lg md:text-3xl font-bold tracking-tight text-foreground">Reports & Exports</h2>
+                <p className="text-muted-foreground text-sm md:text-lg">Analyze your spending and extract offline backups.</p>
             </div>
 
-            <div className="flex flex-col md:flex-row items-center justify-between gap-1 bg-zinc-900 border border-zinc-800 rounded-lg p-3">
+            <div className="flex flex-wrap items-center justify-between gap-4 bg-card border border-border rounded-lg p-3 shadow-sm">
                 <div className="flex items-center gap-3 w-full md:w-auto">
-                    <Filter className="w-5 h-5 text-emerald-400 hidden sm:block" />
+                    <Filter className="w-5 h-5 text-muted-foreground hidden sm:block" />
 
                     <Popover>
                         <PopoverTrigger
                             className={cn(
                                 buttonVariants({ variant: "outline" }),
-                                "w-[140px] sm:w-[180px] justify-start text-left font-normal bg-zinc-950 border-zinc-800",
+                                "w-[140px] sm:w-[180px] justify-start text-left font-normal bg-background border-border",
                                 !startDate && "text-muted-foreground"
                             )}
                         >
                             <CalendarIcon className="mr-2 h-4 w-4" />
                             {startDate ? format(startDate, "MMM d, yyyy") : <span>Start</span>}
                         </PopoverTrigger>
-                        <PopoverContent className="w-auto p-0 bg-zinc-900 border-zinc-800 z-50 pointer-events-auto" align="start">
+                        <PopoverContent className="w-auto p-0 bg-card border-border z-50 pointer-events-auto" align="start">
                             <Calendar
                                 mode="single"
                                 selected={startDate}
@@ -449,20 +449,20 @@ export function Reports() {
                         </PopoverContent>
                     </Popover>
 
-                    <span className="text-zinc-500 font-medium">to</span>
+                    <span className="text-muted-foreground font-medium">to</span>
 
                     <Popover>
                         <PopoverTrigger
                             className={cn(
                                 buttonVariants({ variant: "outline" }),
-                                "w-[140px] sm:w-[180px] justify-start text-left font-normal bg-zinc-950 border-zinc-800",
+                                "w-[140px] sm:w-[180px] justify-start text-left font-normal bg-background border-border",
                                 !endDate && "text-muted-foreground"
                             )}
                         >
                             <CalendarIcon className="mr-2 h-4 w-4" />
                             {endDate ? format(endDate, "MMM d, yyyy") : <span>End</span>}
                         </PopoverTrigger>
-                        <PopoverContent className="w-auto p-0 bg-zinc-900 border-zinc-800 z-50 pointer-events-auto" align="start">
+                        <PopoverContent className="w-auto p-0 bg-card border-border z-50 pointer-events-auto" align="start">
                             <Calendar
                                 mode="single"
                                 selected={endDate}
@@ -473,20 +473,19 @@ export function Reports() {
                     </Popover>
                 </div>
 
-                <div className="flex w-full md:w-auto flex-col sm:flex-row gap-2">
+                <div className="flex w-full md:w-auto flex-col md:flex-row gap-2 mt-4 md:mt-0">
                     <Button
                         onClick={exportToExcel}
-                        size="sm"
-                        className="w-full md:w-auto bg-emerald-500 hover:bg-emerald-600 text-zinc-950 font-medium whitespace-nowrap"
+                        className="w-full md:w-auto bg-gradient-to-r from-amber-400 to-orange-500 hover:from-amber-500 hover:to-orange-600 text-black font-medium whitespace-nowrap"
                     >
                         <Download className="w-4 h-4 mr-2" />
                         Download as Excel File
                     </Button>
                     <Button
                         onClick={exportToGoogleSheet}
-                        size="sm"
                         disabled={isExportingToGoogleSheet}
-                        className="w-full md:w-auto bg-blue-500 hover:bg-blue-600 text-white font-medium whitespace-nowrap disabled:opacity-70"
+                        variant="outline"
+                        className="w-full md:w-auto border-orange-500/50 text-orange-500 hover:bg-orange-500/10 font-medium whitespace-nowrap disabled:opacity-70"
                     >
                         <Upload className="w-4 h-4 mr-2" />
                         {isExportingToGoogleSheet ? "Exporting..." : "Export to Google Sheet"}
@@ -494,55 +493,55 @@ export function Reports() {
                 </div>
             </div>
 
-            <Card className="bg-zinc-900 border-zinc-800 text-zinc-50">
+            <Card className="bg-card border-border text-foreground shadow-md">
                 <CardHeader>
                     <CardTitle>Transactions Log</CardTitle>
-                    <CardDescription className="text-zinc-400">Showing {filteredTransactions.length} entries between {format(startDate, "MMM d, yyyy")} and {format(endDate, "MMM d, yyyy")}</CardDescription>
+                    <CardDescription className="text-muted-foreground">Showing {filteredTransactions.length} entries between {format(startDate, "MMM d, yyyy")} and {format(endDate, "MMM d, yyyy")}</CardDescription>
                 </CardHeader>
                 <CardContent className="overflow-x-auto">
                     {filteredTransactions.length === 0 ? (
-                        <div className="text-zinc-500 py-8 text-center bg-zinc-950/50 rounded border border-zinc-800 border-dashed">
+                        <div className="text-muted-foreground py-8 text-center bg-muted/50 rounded border border-border border-dashed">
                             No data points found in this range.
                         </div>
                     ) : (
                         <div className="space-y-6">
                             <div className="flex flex-col sm:flex-row gap-2 sm:gap-4 mb-4">
-                                <div className="flex items-center justify-between sm:justify-start sm:gap-2 bg-zinc-950 rounded-md border border-zinc-800 px-3 py-2 flex-1">
-                                    <span className="text-sm font-medium text-zinc-400">Income</span>
-                                    <span className="font-bold text-emerald-400">{formatCurrency(totals.income)}</span>
+                                <div className="flex items-center justify-between sm:justify-start sm:gap-2 bg-background rounded-md border border-border px-3 py-2 flex-1">
+                                    <span className="text-sm font-medium text-muted-foreground">Income</span>
+                                    <span className="font-bold text-emerald-600 dark:text-emerald-400">{formatCurrency(totals.income)}</span>
                                 </div>
-                                <div className="flex items-center justify-between sm:justify-start sm:gap-2 bg-zinc-950 rounded-md border border-zinc-800 px-3 py-2 flex-1">
-                                    <span className="text-sm font-medium text-zinc-400">Expense</span>
-                                    <span className="font-bold text-rose-400">{formatCurrency(totals.expense)}</span>
+                                <div className="flex items-center justify-between sm:justify-start sm:gap-2 bg-background rounded-md border border-border px-3 py-2 flex-1">
+                                    <span className="text-sm font-medium text-muted-foreground">Expense</span>
+                                    <span className="font-bold text-rose-600 dark:text-rose-400">{formatCurrency(totals.expense)}</span>
                                 </div>
-                                <div className="flex items-center justify-between sm:justify-start sm:gap-2 bg-zinc-950 rounded-md border border-zinc-800 px-3 py-2 flex-1">
-                                    <span className="text-sm font-medium text-zinc-400">Net Flow</span>
-                                    <span className={`font-bold ${totals.net >= 0 ? "text-emerald-400" : "text-rose-400"}`}>
+                                <div className="flex items-center justify-between sm:justify-start sm:gap-2 bg-background rounded-md border border-border px-3 py-2 flex-1">
+                                    <span className="text-sm font-medium text-muted-foreground">Net Flow</span>
+                                    <span className={`font-bold ${totals.net >= 0 ? "text-emerald-600 dark:text-emerald-400" : "text-rose-600 dark:text-rose-400"}`}>
                                         {totals.net > 0 ? "+" : ""}{formatCurrency(totals.net)}
                                     </span>
                                 </div>
                             </div>
 
                             <Table>
-                                <TableHeader className="border-zinc-800">
-                                    <TableRow className="border-zinc-800 hover:bg-zinc-800/50">
-                                        <TableHead className="w-[120px] text-zinc-400">Date</TableHead>
-                                        <TableHead className="text-zinc-400">Title</TableHead>
-                                        <TableHead className="text-zinc-400 hidden sm:table-cell">Source</TableHead>
-                                        <TableHead className="text-zinc-400 hidden sm:table-cell">Cash Flow</TableHead>
-                                        <TableHead className="text-right text-zinc-400">Amount</TableHead>
+                                <TableHeader className="border-border">
+                                    <TableRow className="border-border hover:bg-muted/50">
+                                        <TableHead className="w-[120px] text-muted-foreground">Date</TableHead>
+                                        <TableHead className="text-muted-foreground">Title</TableHead>
+                                        <TableHead className="text-muted-foreground hidden sm:table-cell">Source</TableHead>
+                                        <TableHead className="text-muted-foreground hidden sm:table-cell">Cash Flow</TableHead>
+                                        <TableHead className="text-right text-muted-foreground">Amount</TableHead>
                                     </TableRow>
                                 </TableHeader>
                                 <TableBody>
                                     {filteredTransactions.map((t) => (
-                                        <TableRow key={t.id} className="border-zinc-800 hover:bg-zinc-800/50">
-                                            <TableCell className="font-medium text-zinc-300">
+                                        <TableRow key={t.id} className="border-border hover:bg-muted/50">
+                                            <TableCell className="font-medium text-foreground/80">
                                                 {format(parseISO(t.timestamp), 'MMM d, yyyy')}
                                             </TableCell>
                                             <TableCell>
                                                 <div className="flex flex-col">
-                                                    <span className="text-zinc-200">{t.title}</span>
-                                                    <span className="text-xs text-zinc-500 sm:hidden">
+                                                    <span className="text-foreground">{t.title}</span>
+                                                    <span className="text-xs text-muted-foreground sm:hidden">
                                                         {t.type === 'Transfer' ? `${t.source} → ${t.toSource}` : t.source}
                                                         {t.category ? ` • ${t.category}` : ''}
                                                     </span>
@@ -550,26 +549,26 @@ export function Reports() {
                                             </TableCell>
                                             <TableCell className="hidden sm:table-cell">
                                                 {t.type === 'Transfer' ? (
-                                                    <div className="flex items-center gap-1 text-xs text-zinc-400">
+                                                    <div className="flex items-center gap-1 text-xs text-muted-foreground">
                                                         <span>{t.source}</span>
                                                         <span>→</span>
                                                         <span>{t.toSource}</span>
                                                     </div>
                                                 ) : (
-                                                    <Badge variant="outline" className="border-zinc-700 text-zinc-300">{t.source}</Badge>
+                                                    <Badge variant="outline" className="border-border text-foreground bg-muted/50">{t.source}</Badge>
                                                 )}
                                             </TableCell>
                                             <TableCell className="hidden sm:table-cell">
                                                 <div className="flex gap-2">
-                                                    <Badge variant="secondary" className="bg-zinc-800 text-zinc-300 hover:bg-zinc-700">{t.type}</Badge>
+                                                    <Badge variant="secondary" className="bg-muted text-foreground hover:bg-muted/80">{t.type}</Badge>
                                                     {t.category && (
-                                                        <Badge variant="outline" className={`border-zinc-700 ${t.category === 'Need' ? 'text-blue-400' : t.category === 'Want' ? 'text-purple-400' : 'text-zinc-400'}`}>
+                                                        <Badge variant="outline" className={`border-border bg-muted/50 ${t.category === 'Need' ? 'text-blue-600 dark:text-blue-400' : t.category === 'Want' ? 'text-purple-600 dark:text-purple-400' : 'text-foreground/80'}`}>
                                                             {t.category}
                                                         </Badge>
                                                     )}
                                                 </div>
                                             </TableCell>
-                                            <TableCell className={`text-right ${t.type === 'Transfer' ? 'text-blue-400' : t.amount > 0 ? 'text-emerald-400' : 'text-zinc-100'}`}>
+                                            <TableCell className={`text-right ${t.type === 'Transfer' ? 'text-blue-600 dark:text-blue-400' : t.amount > 0 ? 'text-emerald-600 dark:text-emerald-400' : 'text-foreground'}`}>
                                                 {t.type === 'Transfer' ? '' : t.amount > 0 ? '+' : '-'}{formatCurrency(Math.abs(t.amount))}
                                             </TableCell>
                                         </TableRow>
