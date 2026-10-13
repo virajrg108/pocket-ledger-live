@@ -1,4 +1,4 @@
-# PocketLedger
+# Pocket Ledger
 
 PocketLedger is a fast Progressive Web App (PWA) designed for logging and managing your daily financial transactions. With seamless cloud synchronization via Firebase, PocketLedger ensures your financial data is securely backed up and instantly accessible across all your devices.
 

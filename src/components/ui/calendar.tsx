@@ -31,7 +31,7 @@ function Calendar({
     <DayPicker
       showOutsideDays={showOutsideDays}
       className={cn(
-        "group/calendar bg-background p-3 text-zinc-100",
+        "group/calendar bg-background p-3 text-foreground",
         String.raw`rtl:**:[.rdp-button\_next>svg]:rotate-180`,
         String.raw`rtl:**:[.rdp-button\_previous>svg]:rotate-180`,
         className
@@ -119,11 +119,11 @@ function Calendar({
           defaultClassNames.range_end
         ),
         today: cn(
-          "rounded-md bg-zinc-800 text-zinc-50 data-[selected=true]:rounded-none font-bold",
+          "rounded-md bg-accent text-accent-foreground data-[selected=true]:rounded-none font-bold",
           defaultClassNames.today
         ),
         outside: cn(
-          "text-muted-foreground opacity-50 aria-selected:bg-zinc-800/50 aria-selected:text-muted-foreground aria-selected:opacity-30",
+          "text-muted-foreground opacity-50 aria-selected:bg-accent/50 aria-selected:text-muted-foreground aria-selected:opacity-30",
           defaultClassNames.outside
         ),
         disabled: cn(
@@ -209,7 +209,7 @@ function CalendarDayButton({
       data-range-end={modifiers.range_end}
       data-range-middle={modifiers.range_middle}
       className={cn(
-        "relative isolate z-10 flex aspect-square h-9 w-9 flex-col gap-1 border-0 leading-none font-normal items-center justify-center rounded-md hover:bg-zinc-800 hover:text-zinc-50 text-zinc-100 data-[selected-single=true]:bg-emerald-500 data-[selected-single=true]:text-zinc-950 data-[range-end=true]:rounded-r-md data-[range-end=true]:bg-emerald-500 data-[range-end=true]:text-zinc-950 data-[range-middle=true]:rounded-none data-[range-middle=true]:bg-zinc-800 data-[range-middle=true]:text-zinc-50 data-[range-start=true]:rounded-l-md data-[range-start=true]:bg-emerald-500 data-[range-start=true]:text-zinc-950",
+        "relative isolate z-10 flex aspect-square h-9 w-9 flex-col gap-1 border-0 leading-none font-normal items-center justify-center rounded-md hover:bg-accent hover:text-accent-foreground text-foreground data-[selected-single=true]:bg-primary data-[selected-single=true]:text-primary-foreground data-[range-end=true]:rounded-r-md data-[range-end=true]:bg-primary data-[range-end=true]:text-primary-foreground data-[range-middle=true]:rounded-none data-[range-middle=true]:bg-accent data-[range-middle=true]:text-accent-foreground data-[range-start=true]:rounded-l-md data-[range-start=true]:bg-primary data-[range-start=true]:text-primary-foreground",
         defaultClassNames.day,
         className
       )}

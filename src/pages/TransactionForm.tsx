@@ -86,6 +86,9 @@ export function TransactionForm() {
         },
     });
 
+    const [accounts] = useCollectionData(collections?.accounts);
+    const [transactions] = useCollectionData(collections?.transactions);
+
     useEffect(() => {
         async function loadTransaction() {
             if (!isEditing || !user || !id) return;
@@ -112,6 +115,32 @@ export function TransactionForm() {
         }
         loadTransaction();
     }, [id, isEditing, form, user]);
+
+    useEffect(() => {
+        if (!isEditing && !voiceData?.source && accounts && accounts.length > 0 && !form.getValues("source")) {
+            let defaultSource = accounts[0].name; // fallback to first account
+            
+            if (transactions && transactions.length > 0) {
+                const accountCounts: Record<string, number> = {};
+                transactions.forEach((t: any) => {
+                    if (t.source) {
+                        accountCounts[t.source] = (accountCounts[t.source] || 0) + 1;
+                    }
+                });
+                let mostUsed = "";
+                let maxCount = 0;
+                for (const [acc, count] of Object.entries(accountCounts)) {
+                    if (count > maxCount && accounts.find((a: any) => a.name === acc)) {
+                        maxCount = count;
+                        mostUsed = acc;
+                    }
+                }
+                if (mostUsed) defaultSource = mostUsed;
+            }
+            
+            form.setValue("source", defaultSource);
+        }
+    }, [transactions, accounts, isEditing, voiceData, form]);
 
     async function onSubmit(values: z.infer<typeof formSchema>) {
         // Determine the actual signed amount based on type
@@ -159,25 +188,24 @@ export function TransactionForm() {
         }
     }
 
-    const [accounts] = useCollectionData(collections?.accounts);
     const watchedType = form.watch("type");
 
-    if (loadError) return <div className="p-8 text-red-500">{loadError}</div>;
+    if (loadError) return <div className="p-8 text-destructive">{loadError}</div>;
     // We optionally can wait for accounts to load to ensure dropdown isn't empty on fast loads
-    if (accounts === undefined) return <div className="p-8 text-zinc-400">Loading form...</div>;
+    if (accounts === undefined) return <div className="p-8 text-muted-foreground">Loading form...</div>;
 
     return (
         <div className="p-4 md:p-8 animate-in slide-in-from-bottom-4 duration-300">
-            <Button variant="ghost" className="mb-4 text-zinc-400 hover:text-zinc-50" onClick={() => navigate(-1)}>
+            <Button variant="ghost" className="mb-4 text-muted-foreground hover:text-foreground hover:bg-muted" onClick={() => navigate(-1)}>
                 <ArrowLeft className="w-4 h-4 mr-2" />
                 Back
             </Button>
 
-            <Card className="max-w-xl mx-auto bg-zinc-900 border-zinc-800 text-zinc-50">
+            <Card className="max-w-xl mx-auto bg-card border-border text-foreground">
                 <CardHeader className="flex flex-row items-center justify-between">
                     <div>
                         <CardTitle className="text-lg">{isEditing ? "Edit Entry" : "New Entry"}</CardTitle>
-                        <CardDescription className="text-zinc-400 text-sm md:text-lg">Log a new financial transaction offline.</CardDescription>
+                        <CardDescription className="text-muted-foreground text-sm md:text-lg">Log a new financial transaction offline.</CardDescription>
                     </div>
                     {isEditing && (
                         <Button variant="destructive" size="icon" onClick={handleDelete}>
@@ -195,9 +223,9 @@ export function TransactionForm() {
                                     <FormItem>
                                         <FormLabel>Description / Title</FormLabel>
                                         <FormControl>
-                                            <Input placeholder="e.g. Weekly Groceries" className="bg-zinc-950 border-zinc-800 focus-visible:ring-orange-500" {...field} />
+                                            <Input placeholder="e.g. Weekly Groceries" className="bg-background border-border focus-visible:ring-primary" {...field} />
                                         </FormControl>
-                                        <FormMessage className="text-rose-500" />
+                                        <FormMessage className="text-destructive" />
                                     </FormItem>
                                 )}
                             />
@@ -210,9 +238,9 @@ export function TransactionForm() {
                                         <FormItem>
                                             <FormLabel>Amount</FormLabel>
                                             <FormControl>
-                                                <Input type="number" step="0.01" min="0" placeholder="0.00" className="bg-zinc-950 border-zinc-800 focus-visible:ring-orange-500" {...field} />
+                                                <Input type="number" step="0.01" min="0" placeholder="0.00" className="bg-background border-border focus-visible:ring-primary" {...field} />
                                             </FormControl>
-                                            <FormMessage className="text-rose-500" />
+                                            <FormMessage className="text-destructive" />
                                         </FormItem>
                                     )}
                                 />
@@ -229,7 +257,7 @@ export function TransactionForm() {
                                                         <Button
                                                             variant={"outline"}
                                                             className={cn(
-                                                                "w-full pl-3 text-left font-normal bg-zinc-950 border-zinc-800 hover:bg-zinc-800 hover:text-zinc-50 text-zinc-300",
+                                                                "w-full pl-3 text-left font-normal bg-background border-border hover:bg-muted hover:text-foreground text-foreground",
                                                                 !field.value && "text-muted-foreground"
                                                             )}
                                                         />
@@ -242,7 +270,7 @@ export function TransactionForm() {
                                                         <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
                                                     </PopoverTrigger>
                                                 </FormControl>
-                                                <PopoverContent className="w-auto p-0 bg-zinc-900 border-zinc-800" align="start">
+                                                <PopoverContent className="w-auto p-0 bg-popover border-border" align="start">
                                                     <Calendar
                                                         mode="single"
                                                         selected={field.value}
@@ -251,11 +279,11 @@ export function TransactionForm() {
                                                             date > new Date() || date < new Date("1900-01-01")
                                                         }
                                                         initialFocus
-                                                        className="text-zinc-50"
+                                                        className="text-popover-foreground"
                                                     />
                                                 </PopoverContent>
                                             </Popover>
-                                            <FormMessage className="text-rose-500" />
+                                            <FormMessage className="text-destructive" />
                                         </FormItem>
                                     )}
                                 />
@@ -270,17 +298,17 @@ export function TransactionForm() {
                                             <FormLabel>Cash Flow</FormLabel>
                                             <Select onValueChange={field.onChange} defaultValue={field.value}>
                                                 <FormControl>
-                                                    <SelectTrigger className="bg-zinc-950 border-zinc-800 text-zinc-300 focus:ring-orange-500">
+                                                    <SelectTrigger className="bg-background border-border text-foreground focus:ring-primary">
                                                         <SelectValue placeholder="Select type" />
                                                     </SelectTrigger>
                                                 </FormControl>
-                                                <SelectContent className="bg-zinc-900 border-zinc-800 text-zinc-50">
+                                                <SelectContent className="bg-popover border-border text-popover-foreground">
                                                     <SelectItem value="Debit">Debit (Expense)</SelectItem>
                                                     <SelectItem value="Credit">Credit (Income)</SelectItem>
                                                     <SelectItem value="Transfer">Transfer</SelectItem>
                                                 </SelectContent>
                                             </Select>
-                                            <FormMessage className="text-rose-500" />
+                                            <FormMessage className="text-destructive" />
                                         </FormItem>
                                     )}
                                 />
@@ -293,11 +321,11 @@ export function TransactionForm() {
                                             <FormLabel>{watchedType === 'Transfer' ? 'From Account' : 'Source Account'}</FormLabel>
                                             <Select onValueChange={field.onChange} defaultValue={field.value} value={field.value}>
                                                 <FormControl>
-                                                    <SelectTrigger className="bg-zinc-950 border-zinc-800 text-zinc-300 focus:ring-orange-500">
+                                                    <SelectTrigger className="bg-background border-border text-foreground focus:ring-primary">
                                                         <SelectValue placeholder="Select source" />
                                                     </SelectTrigger>
                                                 </FormControl>
-                                                <SelectContent className="bg-zinc-900 border-zinc-800 text-zinc-50">
+                                                <SelectContent className="bg-popover border-border text-popover-foreground">
                                                     {accounts?.map((acc: any) => (
                                                         <SelectItem key={acc.id} value={acc.name}>{acc.name}</SelectItem>
                                                     ))}
@@ -306,7 +334,7 @@ export function TransactionForm() {
                                                     )}
                                                 </SelectContent>
                                             </Select>
-                                            <FormMessage className="text-rose-500" />
+                                            <FormMessage className="text-destructive" />
                                         </FormItem>
                                     )}
                                 />
@@ -320,11 +348,11 @@ export function TransactionForm() {
                                                 <FormLabel>To Account</FormLabel>
                                                 <Select onValueChange={field.onChange} defaultValue={field.value} value={field.value}>
                                                     <FormControl>
-                                                        <SelectTrigger className="bg-zinc-950 border-zinc-800 text-zinc-300 focus:ring-orange-500">
+                                                        <SelectTrigger className="bg-background border-border text-foreground focus:ring-primary">
                                                             <SelectValue placeholder="Select destination" />
                                                         </SelectTrigger>
                                                     </FormControl>
-                                                    <SelectContent className="bg-zinc-900 border-zinc-800 text-zinc-50">
+                                                    <SelectContent className="bg-popover border-border text-popover-foreground">
                                                         {accounts?.map((acc: any) => (
                                                             <SelectItem key={acc.id} value={acc.name}>{acc.name}</SelectItem>
                                                         ))}
@@ -333,7 +361,7 @@ export function TransactionForm() {
                                                         )}
                                                     </SelectContent>
                                                 </Select>
-                                                <FormMessage className="text-rose-500" />
+                                                <FormMessage className="text-destructive" />
                                             </FormItem>
                                         )}
                                     />
@@ -348,24 +376,24 @@ export function TransactionForm() {
                                                 <FormLabel>Category</FormLabel>
                                                 <Select onValueChange={field.onChange} defaultValue={field.value} value={field.value}>
                                                     <FormControl>
-                                                        <SelectTrigger className="bg-zinc-950 border-zinc-800 text-zinc-300 focus:ring-orange-500">
+                                                        <SelectTrigger className="bg-background border-border text-foreground focus:ring-primary">
                                                             <SelectValue placeholder="Select category" />
                                                         </SelectTrigger>
                                                     </FormControl>
-                                                    <SelectContent className="bg-zinc-900 border-zinc-800 text-zinc-50">
+                                                    <SelectContent className="bg-popover border-border text-popover-foreground">
                                                         <SelectItem value="Need">Need</SelectItem>
                                                         <SelectItem value="Want">Want</SelectItem>
                                                         <SelectItem value="Other">Other</SelectItem>
                                                     </SelectContent>
                                                 </Select>
-                                                <FormMessage className="text-rose-500" />
+                                                <FormMessage className="text-destructive" />
                                             </FormItem>
                                         )}
                                     />
                                 )}
                             </div>
 
-                            <Button type="submit" className="w-full bg-orange-500 hover:bg-orange-600 text-zinc-950 font-bold">
+                            <Button type="submit" className="w-full bg-gradient-to-r from-amber-400 to-orange-500 hover:from-amber-500 hover:to-orange-600 text-white font-bold border-0">
                                 {isEditing ? "Save Changes" : "Save Entry"}
                             </Button>
                         </form>

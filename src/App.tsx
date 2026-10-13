@@ -33,32 +33,41 @@ function Layout() {
 
         <Link
           to="/"
-          className={`flex items-center justify-center p-3 md:p-2 md:justify-start rounded-lg transition-colors ${location.pathname === '/' ? 'text-primary bg-primary/10' : 'text-muted-foreground hover:text-foreground hover:bg-muted'}`}
+          className={`p-2 flex items-center rounded-lg transition-colors ${
+            location.pathname === '/' ? 'text-primary bg-primary/10' : 'text-muted-foreground hover:bg-muted hover:text-foreground'
+          }`}
+          title="Dashboard"
         >
-          <LayoutDashboard className="w-5 h-5 md:mr-3" />
-          <span className="hidden md:block text-sm font-medium">Dashboard</span>
+          <LayoutDashboard className="w-5 h-5 md:w-6 md:h-6 md:mr-3" />
+          <span className="hidden md:inline font-medium">Dashboard</span>
         </Link>
-
+        
         <Link
           to="/reports"
-          className={`flex items-center justify-center p-3 md:p-2 md:mt-2 md:justify-start rounded-lg transition-colors ${location.pathname === '/reports' ? 'text-primary bg-primary/10' : 'text-muted-foreground hover:text-foreground hover:bg-muted'}`}
+          className={`p-2 flex items-center rounded-lg transition-colors ${
+            location.pathname === '/reports' ? 'text-primary bg-primary/10' : 'text-muted-foreground hover:bg-muted hover:text-foreground'
+          }`}
+          title="Reports"
         >
-          <BarChart3 className="w-5 h-5 md:mr-3" />
-          <span className="hidden md:block text-sm font-medium">Reports</span>
+          <BarChart3 className="w-5 h-5 md:w-6 md:h-6 md:mr-3" />
+          <span className="hidden md:inline font-medium">Reports</span>
         </Link>
 
         <Link
           to="/settings"
-          className={`flex items-center justify-center p-3 md:p-2 md:mt-2 md:justify-start rounded-lg transition-colors ${location.pathname === '/settings' ? 'text-primary bg-primary/10' : 'text-muted-foreground hover:text-foreground hover:bg-muted'}`}
+          className={`p-2 flex items-center rounded-lg transition-colors ${
+            location.pathname === '/settings' ? 'text-primary bg-primary/10' : 'text-muted-foreground hover:bg-muted hover:text-foreground'
+          }`}
+          title="Settings"
         >
-          <SettingsIcon className="w-5 h-5 md:mr-3" />
-          <span className="hidden md:block text-sm font-medium">Settings</span>
+          <SettingsIcon className="w-5 h-5 md:w-6 md:h-6 md:mr-3" />
+          <span className="hidden md:inline font-medium">Settings</span>
         </Link>
 
-        <div className="md:mt-auto py-2">
+        <div className="md:mt-auto py-1 md:py-2">
           <Link
             to="/add"
-            className="flex items-center justify-center p-3 md:p-2 bg-gradient-to-r from-amber-400 to-orange-500 hover:from-amber-500 hover:to-orange-600 text-black border-0 rounded-full shadow-lg transition-transform hover:scale-105"
+            className="flex items-center justify-center p-2 md:p-2 bg-gradient-to-r from-amber-400 to-orange-500 hover:from-amber-500 hover:to-orange-600 text-white border-0 rounded-full shadow-lg transition-transform hover:scale-105"
           >
             <PlusCircle className="w-5 h-5 md:mr-2" />
             <span className="hidden md:inline font-semibold">New Entry</span>
@@ -80,7 +89,7 @@ function Layout() {
           <ThemeToggle />
         </div>
 
-        <main className="flex-1 w-full max-w-5xl mx-auto md:p-8 pt-4">
+        <main className="flex-1 w-full max-w-5xl mx-auto p-2 md:p-8">
           <Outlet />
         </main>
         <VoiceCommand />

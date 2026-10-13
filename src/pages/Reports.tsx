@@ -83,6 +83,21 @@ function getReportName(startDate: Date, endDate: Date) {
     return `${format(startDate, "yyyyMMdd")}_to_${format(endDate, "yyyyMMdd")}`;
 }
 
+function getAccountTxDelta(t: { type?: string; source?: string; toSource?: string; amount: number }, accountName: string): number {
+    const amt = Math.abs(t.amount);
+    if (t.type === 'Transfer') {
+        if (t.source === accountName) return -amt;
+        if (t.toSource === accountName) return amt;
+        return 0;
+    }
+    if (t.source === accountName) {
+        if (t.type === 'Debit') return -amt;
+        if (t.type === 'Credit') return amt;
+        return t.amount;
+    }
+    return 0;
+}
+
 export function Reports() {
     const [startDate, setStartDate] = useState<Date>(startOfMonth(new Date()));
     const [endDate, setEndDate] = useState<Date>(endOfMonth(new Date()));
@@ -116,9 +131,14 @@ export function Reports() {
     // Calculate totals across the selected date range
     const totals = filteredTransactions.reduce((acc, t) => {
         if (t.type === 'Transfer') return acc;
-        if (t.amount > 0) acc.income += t.amount;
-        if (t.amount < 0) acc.expense += Math.abs(t.amount);
-        acc.net += t.amount;
+        const amt = Math.abs(t.amount);
+        if (t.type === 'Credit' || (!t.type && t.amount > 0)) {
+            acc.income += amt;
+            acc.net += amt;
+        } else if (t.type === 'Debit' || (!t.type && t.amount < 0)) {
+            acc.expense += amt;
+            acc.net -= amt;
+        }
         return acc;
     }, { income: 0, expense: 0, net: 0 });
 
@@ -131,20 +151,10 @@ export function Reports() {
                 const sDate = new Date(startDate.getFullYear(), startDate.getMonth(), startDate.getDate());
                 return isBefore(tDate, sDate);
             });
-            const openingTxSum = beforeTxs.reduce((sum, t) => {
-                if (t.type !== 'Transfer' && t.source === acc.name) return sum + t.amount;
-                if (t.type === 'Transfer' && t.source === acc.name) return sum - t.amount;
-                if (t.type === 'Transfer' && t.toSource === acc.name) return sum + t.amount;
-                return sum;
-            }, 0);
+            const openingTxSum = beforeTxs.reduce((sum, t) => sum + getAccountTxDelta(t, acc.name), 0);
             const openingBalance = acc.initialBalance + openingTxSum;
 
-            const periodTxSum = filteredTransactions.reduce((sum, t) => {
-                if (t.type !== 'Transfer' && t.source === acc.name) return sum + t.amount;
-                if (t.type === 'Transfer' && t.source === acc.name) return sum - t.amount;
-                if (t.type === 'Transfer' && t.toSource === acc.name) return sum + t.amount;
-                return sum;
-            }, 0);
+            const periodTxSum = filteredTransactions.reduce((sum, t) => sum + getAccountTxDelta(t, acc.name), 0);
             const closingBalance = openingBalance + periodTxSum;
 
             return { name: acc.name, openingBalance, closingBalance };
@@ -568,8 +578,8 @@ export function Reports() {
                                                     )}
                                                 </div>
                                             </TableCell>
-                                            <TableCell className={`text-right ${t.type === 'Transfer' ? 'text-blue-600 dark:text-blue-400' : t.amount > 0 ? 'text-emerald-600 dark:text-emerald-400' : 'text-foreground'}`}>
-                                                {t.type === 'Transfer' ? '' : t.amount > 0 ? '+' : '-'}{formatCurrency(Math.abs(t.amount))}
+                                            <TableCell className={`text-right ${t.type === 'Transfer' ? 'text-blue-600 dark:text-blue-400' : t.type === 'Debit' ? 'text-foreground' : t.type === 'Credit' ? 'text-emerald-600 dark:text-emerald-400' : t.amount > 0 ? 'text-emerald-600 dark:text-emerald-400' : 'text-foreground'}`}>
+                                                {t.type === 'Transfer' ? '' : t.type === 'Debit' ? '-' : t.type === 'Credit' ? '+' : t.amount > 0 ? '+' : '-'}{formatCurrency(Math.abs(t.amount))}
                                             </TableCell>
                                         </TableRow>
                                     ))}
